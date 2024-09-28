@@ -1,14 +1,14 @@
-const express = require('express');  // Importa express
-const mysql = require('mysql2');     // Importa mysql2 para conexión con MySQL
-require('dotenv').config();          // Cargar las variables del archivo .env
+const express = require('express');  
+const mysql = require('mysql2');     
+require('dotenv').config();         
 
-const app = express();               // Inicializa la aplicación express
+const app = express();               
 const port = process.env.PORT || 3000;
 
-// Middleware para manejar JSON
+// Manejo de json
 app.use(express.json());
 
-// Conexión a la base de datos
+
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
   port: process.env.DB_PORT
 });
 
-// Conectar a la base de datos
+// Coneccion a la base de datos
 connection.connect((err) => {
   if (err) {
     console.error('Error conectando a la base de datos:', err);
@@ -27,10 +27,9 @@ connection.connect((err) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('BIENVENIDOS A MI API :)');
+  res.send('BIENVENIDOS A MI API :)');
 });
 
-// Definir una ruta de ejemplo para guardar un vehículo
 app.post('/api/vehiculos', (req, res) => {
   const { idColor, idMarca, modelo, chasis, motor, nombre, carnet, activo } = req.body;
 
@@ -45,6 +44,34 @@ app.post('/api/vehiculos', (req, res) => {
   });
 });
 
+// Procedimiento para actualizar un vehículo
+app.put('/api/vehiculos/:id', (req, res) => {
+    const { id } = req.params;
+    const { idcolor, idmarca, modelo, chasis, motor, nombre, carnet, activo } = req.body;
+    const query = 'CALL ActualizarVehiculo(?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    connection.query(query, [id, idcolor, idmarca, modelo, chasis, motor, nombre, carnet, activo], (err, results) => {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.json({ message: 'Vehículo actualizado correctamente', results });
+    });
+});
+
+// Procedimiento para eliminar un vehículo
+app.delete('/api/vehiculos/:id', (req, res) => {
+    const { id } = req.params;
+    const query = 'CALL EliminarVehiculo(?)';
+    connection.query(query, [id], (err, results) => {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.json({ message: 'Vehículo eliminado correctamente', results });
+    });
+});
+
+// Procedimiento para buscar un vehículo por ID
 app.get('/api/vehiculos/:id', (req, res) => {
   const { id } = req.params;
   const query = `CALL sp_crud_vehiculos(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
@@ -57,7 +84,7 @@ app.get('/api/vehiculos/:id', (req, res) => {
   });
 });
 
-// Inicia el servidor
+// Iniciar servidor
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
 });
