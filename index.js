@@ -30,45 +30,44 @@ app.get('/', (req, res) => {
   res.send('BIENVENIDOS A MI API :)');
 });
 
+// Crear un nuevo vehículo
 app.post('/api/vehiculos', (req, res) => {
-  const { idColor, idMarca, modelo, chasis, motor, nombre, carnet, activo } = req.body;
-
-  const query = `CALL gestionarVehiculos(?, NULL, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  connection.query(query, ['guardar', idColor, idMarca, modelo, chasis, motor, nombre, carnet, activo], (err, results) => {
+  const { idColor, idMarca, modelo, chasis, motor, nombre, activo } = req.body;
+  const query = `CALL sp_crud_vehiculos(NULL, ?, ?, ?, ?, ?, ?, ?, 'C')`;
+  connection.query(query, [idColor, idMarca, modelo, chasis, motor, nombre, activo], (err, results) => {
     if (err) {
-      console.error('Error ejecutando el procedimiento:', err);
-      res.status(500).send('Error al guardar el vehículo');
-      return;
+      console.error('Error al ejecutar el procedimiento almacenado:', err);
+      return res.status(500).send('Error al insertar el vehículo');
     }
-    res.status(200).json({ message: 'Vehículo guardado correctamente' });
+    res.status(200).json({ message: 'Vehículo insertado correctamente' });
   });
 });
 
-// Procedimiento para actualizar un vehículo
+// Actualizar un vehículo
 app.put('/api/vehiculos/:id', (req, res) => {
-    const { id } = req.params;
-    const { idcolor, idmarca, modelo, chasis, motor, nombre, carnet, activo } = req.body;
-    const query = 'CALL ActualizarVehiculo(?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    connection.query(query, [id, idcolor, idmarca, modelo, chasis, motor, nombre, carnet, activo], (err, results) => {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-        res.json({ message: 'Vehículo actualizado correctamente', results });
-    });
+  const { id } = req.params;
+  const { idColor, idMarca, modelo, chasis, motor, nombre, activo } = req.body;
+  const query = `CALL sp_crud_vehiculos(?, ?, ?, ?, ?, ?, ?, ?, 'U')`;
+  connection.query(query, [id, idColor, idMarca, modelo, chasis, motor, nombre, activo], (err, results) => {
+    if (err) {
+      console.error('Error al ejecutar el procedimiento almacenado:', err);
+      return res.status(500).send('Error al actualizar el vehículo');
+    }
+    res.status(200).json({ message: 'Vehículo actualizado correctamente' });
+  });
 });
 
 // Procedimiento para eliminar un vehículo
 app.delete('/api/vehiculos/:id', (req, res) => {
-    const { id } = req.params;
-    const query = 'CALL EliminarVehiculo(?)';
-    connection.query(query, [id], (err, results) => {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-        res.json({ message: 'Vehículo eliminado correctamente', results });
-    });
+  const { id } = req.params;
+  const query = `CALL sp_crud_vehiculos(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'D')`;
+  connection.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error al ejecutar el procedimiento almacenado:', err);
+      return res.status(500).send('Error al eliminar el vehículo');
+    }
+    res.status(200).json({ message: 'Vehículo eliminado correctamente' });
+  });
 });
 
 // Procedimiento para buscar un vehículo por ID
