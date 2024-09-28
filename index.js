@@ -26,6 +26,10 @@ connection.connect((err) => {
   console.log('Conexión a la base de datos exitosa');
 });
 
+app.get('/', (req, res) => {
+    res.send('BIENVENIDOS A MI API :)');
+});
+
 // Definir una ruta de ejemplo para guardar un vehículo
 app.post('/api/vehiculos', (req, res) => {
   const { idColor, idMarca, modelo, chasis, motor, nombre, carnet, activo } = req.body;
