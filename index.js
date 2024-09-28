@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 });
 
 // Obtener todos los vehículos
-app.get('/api/vehiculo', (req, res) => {
+app.get('/api/vehiculos', (req, res) => {
   const query = `CALL sp_crud_vehiculos(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
   connection.query(query, (err, results) => {
     if (err) {
