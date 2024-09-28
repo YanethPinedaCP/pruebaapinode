@@ -30,6 +30,18 @@ app.get('/', (req, res) => {
   res.send('BIENVENIDOS A MI API :)');
 });
 
+// Procedimiento para obtener todos los vehículos
+app.get('/api/vehiculos', (req, res) => {
+  const query = `CALL sp_crud_vehiculos(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`; // Asumiendo que 'R' en el SP devuelve todos
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al ejecutar el procedimiento almacenado:', err);
+      return res.status(500).send('Error al obtener los vehículos');
+    }
+    res.status(200).json(results[0]);  // Devuelve el array de vehículos
+  });
+});
+
 // Crear un nuevo vehículo
 app.post('/api/vehiculos', (req, res) => {
   const { idColor, idMarca, modelo, chasis, motor, nombre, activo } = req.body;
@@ -44,7 +56,7 @@ app.post('/api/vehiculos', (req, res) => {
 });
 
 // Actualizar un vehículo
-app.put('/api/vehiculos/:id', (req, res) => {
+app.put('/api/vehiculo/:id', (req, res) => {
   const { id } = req.params;
   const { idColor, idMarca, modelo, chasis, motor, nombre, activo } = req.body;
   const query = `CALL sp_crud_vehiculos(?, ?, ?, ?, ?, ?, ?, ?, 'U')`;
@@ -58,7 +70,7 @@ app.put('/api/vehiculos/:id', (req, res) => {
 });
 
 // Procedimiento para eliminar un vehículo
-app.delete('/api/vehiculos/:id', (req, res) => {
+app.delete('/api/vehiculo/:id', (req, res) => {
   const { id } = req.params;
   const query = `CALL sp_crud_vehiculos(?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'D')`;
   connection.query(query, [id], (err, results) => {
@@ -71,7 +83,7 @@ app.delete('/api/vehiculos/:id', (req, res) => {
 });
 
 // Procedimiento para buscar un vehículo por ID
-app.get('/api/vehiculos/:id', (req, res) => {
+app.get('/api/vehiculo/:id', (req, res) => {
   const { id } = req.params;
   const query = `CALL sp_crud_vehiculos(?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
   connection.query(query, [id], (err, results) => {
