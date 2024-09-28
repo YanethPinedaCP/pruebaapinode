@@ -45,6 +45,18 @@ app.post('/api/vehiculos', (req, res) => {
   });
 });
 
+app.get('/api/vehiculos/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `CALL sp_crud_vehiculos(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
+  connection.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error al ejecutar el procedimiento almacenado:', err);
+      return res.status(500).send('Error al buscar el vehículo');
+    }
+    res.status(200).json(results[0]);
+  });
+});
+
 // Inicia el servidor
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
