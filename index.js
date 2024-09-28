@@ -30,18 +30,6 @@ app.get('/', (req, res) => {
   res.send('BIENVENIDOS A MI API :)');
 });
 
-// Obtener todos los vehículos
-app.get('/api/vehiculos', (req, res) => {
-  const query = `CALL sp_crud_vehiculos(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
-  connection.query(query, (err, results) => {
-    if (err) {
-      console.error('Error al ejecutar el procedimiento almacenado:', err);
-      return res.status(500).send('Error al obtener los vehículos');
-    }
-    res.status(200).json(results[0]); // Los resultados estarán en la primera fila del array
-  });
-});
-
 // Crear un nuevo vehículo
 app.post('/api/vehiculos', (req, res) => {
   const { idColor, idMarca, modelo, chasis, motor, nombre, activo } = req.body;
