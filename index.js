@@ -60,7 +60,7 @@ app.put('/api/vehiculos/:id', (req, res) => {
 // Procedimiento para eliminar un vehículo
 app.delete('/api/vehiculos/:id', (req, res) => {
   const { id } = req.params;
-  const query = `CALL sp_crud_vehiculos(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'D')`;
+  const query = `CALL sp_crud_vehiculos(?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'D')`;
   connection.query(query, [id], (err, results) => {
     if (err) {
       console.error('Error al ejecutar el procedimiento almacenado:', err);
@@ -73,7 +73,7 @@ app.delete('/api/vehiculos/:id', (req, res) => {
 // Procedimiento para buscar un vehículo por ID
 app.get('/api/vehiculos/:id', (req, res) => {
   const { id } = req.params;
-  const query = `CALL sp_crud_vehiculos(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
+  const query = `CALL sp_crud_vehiculos(?, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'R')`;
   connection.query(query, [id], (err, results) => {
     if (err) {
       console.error('Error al ejecutar el procedimiento almacenado:', err);
